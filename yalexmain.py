@@ -42,22 +42,22 @@ def main():
     while True:
         file_name = input("Enter the name of the yalex file to process (slr-1/slr-2/slr-3/slr-4) or exit: ")
         if file_name == 'exit':
-            print('\n\nGoodbye!\n\n')
+            print('\n\nSaliste\n\n')
             break
         path = '' + file_name + '.yal'
         yal_processor = YalProcessor(path)
 
-        for rule_name in yal_processor.rules:
-            rule_body = yal_processor.rules[rule_name]
+        # for rule_name in yal_processor.rules:
+        #     rule_body = yal_processor.rules[rule_name]
 
-            regex = to_regex(rule_body)
-            regex = separate_symbols(regex)
+        #     regex = to_regex(rule_body)
+        #     regex = separate_symbols(regex)
 
-            print(rule_name, regex)
-            expr_tree = regularExpression(regex)
-            print('Postfix notation:', ''.join(expr_tree.postfix))
-            tree = ExpressionTree(expr_tree.postfix)
-            print('\n\n')
+        #     print(rule_name, regex)
+        #     expr_tree = regularExpression(regex)
+        #     print('Postfix notation:', ''.join(expr_tree.postfix))
+        #     tree = ExpressionTree(expr_tree.postfix)
+        #     print('\n\n')
 
 if __name__ == "__main__":
     main()

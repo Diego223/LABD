@@ -16,28 +16,30 @@ def push(stack, op):
 
 #***************************************************************************
 def replace_reserved_words(r: str):
-    r = r.replace('(', 'Þ')
-    r = r.replace(')', 'δ')
-    r = r.replace('{', 'ζ')
-    r = r.replace('}', 'η')
-    r = r.replace('[', 'θ')
-    r = r.replace(']', 'ω')
-    r = r.replace('|', '¶')
-    r = r.replace('+', 'µ')
-    r = r.replace('-', 'ß')
-    return r
+    return (r
+            .replace('(', 'Þ')
+            .replace(')', 'δ')
+            .replace('{', 'ζ')
+            .replace('}', 'η')
+            .replace('[', 'θ')
+            .replace(']', 'ω')
+            .replace('|', '¶')
+            .replace('+', 'µ')
+            .replace('-', 'ß')
+            )
     
 def return_reserved_words(r: str):
-    r = r.replace('Þ', '(')
-    r = r.replace('δ', ')')
-    r = r.replace('ζ', '{')
-    r = r.replace('η', '}')
-    r = r.replace('θ', '[')
-    r = r.replace('ω', ']')
-    r = r.replace('¶', '|')
-    r = r.replace('µ', '+') #unicode U+0398    
-    r = r.replace('ß', '-') #unicode U+03A3
-    return r
+    return (r
+            .replace('Þ', '(')
+            .replace('δ', ')')
+            .replace('ζ', '{')
+            .replace('η', '}')
+            .replace('θ', '[')
+            .replace('ω', ']')
+            .replace('¶', '|')
+            .replace('µ', '+')
+            .replace('ß', '-')
+            )
 
 def process_string(s: str):
     result = []
@@ -54,6 +56,30 @@ def process_string(s: str):
                 result.append(s[start_idx:i])
                 in_quotes = True
             start_idx = i + 1
+    result.append(s[start_idx:])
+    return ''.join(result)
+
+def process_string(s: str):
+    result = []
+    in_quotes = False
+    start_idx = 0
+    for i, char in enumerate(s):
+        if char == "'":
+            if in_quotes:
+                # End of quoted substring; apply replace_reserved_words
+                result.append(replace_reserved_words(s[start_idx:i]))
+                in_quotes = False
+            else:
+                # Copy unprocessed substring and start of quoted substring
+                result.append(s[start_idx:i])
+                in_quotes = True
+            start_idx = i + 1
+        #if char is \ and next char is s, replace with space
+        elif char == "\\":
+            if s[i+1] == "s":
+                result.append(s[start_idx:i])
+                result.append(" ")
+                start_idx = i + 2
     # Append remaining unprocessed substring
     result.append(s[start_idx:])
     return ''.join(result)

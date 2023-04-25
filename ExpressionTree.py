@@ -23,7 +23,6 @@ class ExpressionTree:
                 self.symbols.append(symbol)
 
 #*************************************************************************** GEN ARBOL
-
     def genTree(self, node: Node, i=0):
         if node:
             i = self.genTree(node.left, i)
@@ -81,6 +80,7 @@ class ExpressionTree:
 
     def getTree(self):
         for c in self.postfix:
+            # print(c)
             if c in symbols:
                 push(self.stack, Node(c))
             else:
