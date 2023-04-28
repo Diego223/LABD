@@ -2,7 +2,7 @@ from keys import *
 from Functions import *
 
 class regularExpression:
-    def __init__(self, regex):
+    def __init__(self, regex, flag = False):
         self.regex = regex
         self.lastChar = None
         self.postfix = []
@@ -15,9 +15,10 @@ class regularExpression:
         }
         self.stack = []
         self.checkExpression()
-        # self.regex = process_string(self.regex)
+        self.regex = process_string(self.regex)
         self.expandExp()
         self.regex = process_string(self.regex)
+        # print("post processing", self.regex)
         self.replaceOperators()
         self.toPostfix()
 

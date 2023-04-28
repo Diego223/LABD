@@ -203,10 +203,12 @@ class AFD:
     def scanner(self, input_string):
         input_string = replace_reserved_words(input_string)
         idx = 0
+        results = []  # List to store all the matching substrings with their positions
         while idx < len(input_string):
             current_state = self.states[0]
             temp_idx = idx
             success = False
+            matched_string = ""
             while temp_idx < len(input_string):
                 symbol = input_string[temp_idx]
                 if symbol not in self.symbols:
@@ -219,12 +221,15 @@ class AFD:
                 temp_idx += 1
                 if current_state in self.final_states:
                     success = True
-                    break
+                    matched_string = input_string[idx:temp_idx]
             if success:
-                string = return_reserved_words(input_string[idx:temp_idx])
-                return string, idx, temp_idx - 1
-            idx += 1
-        return None, -1, -1
+                string = return_reserved_words(matched_string)
+                results.append((string, idx, temp_idx - 1))  # Append the match and its positions to the results list
+                idx = temp_idx  # Update the index to continue scanning from the next character
+            else:
+                idx += 1
+        return results
+
 
 #***************************************************************************
     def printSubsets(self):
