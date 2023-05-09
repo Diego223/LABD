@@ -106,3 +106,22 @@ def findMissing(lines, regex):
         else:
             continue
     return finds
+
+
+def findInpro(line, regex):
+    regex = regularExpression(regex)
+    regex.augmentRegex()
+    # print("postfix expression", return_reserved_words(''.join(regex.postfix)))
+    tree = ExpressionTree(regex.postfix)
+    dfa = AFD(tree=tree)
+    return dfa.scannerpro(line)
+
+def findAllpro(lines, regex):
+    finds = {}
+    for i in range(len(lines)):
+        find = findInpro(lines[i], regex)
+        if len(find) > 0:
+            finds[i+1] = find
+        else:
+            continue
+    return finds

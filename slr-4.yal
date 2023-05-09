@@ -9,8 +9,8 @@ let str = (_)*
 let digit = ['0'-'9']
 let digits = digit+
 let id = letter(letter|str|digit)*
-let number = digits(.digits)?('E'['±''-']?digits)?
-01|2|3|4|5|6|7|8|9|01|2|3|4|5|6|7|8|9|*•.01|2|3|4|5|6|7|8|9|•01|2|3|4|5|6|7|8|9|*•ε|•E±•-|•ε01|2|3|4|5|6|7|8|9|•01|2|3|4|5|6|7|8|9|*•|ε|•
+let number = digits('.'digits)?('E'['+''-']?digits)?
+
 rule tokens = 
     ws
   | id        { return ID }               (* Cambie por una acción válida, que devuelva el token *)

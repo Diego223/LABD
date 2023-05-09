@@ -1,0 +1,68 @@
+digraph {
+	0 [label="ESTADOS 0
+expression -> .expression PLUS term
+expression -> .term
+term -> .factor
+factor -> .ID
+factor -> .LPAREN expression RPAREN
+term -> .term TIMES factor"]
+	1 [label="ESTADOS 1
+expression -> t.erm
+term -> t.erm TIMES factor"]
+	2 [label="ESTADOS 2
+expression -> .expression PLUS term
+expression -> .term
+term -> .factor
+factor -> L.PAREN expression RPAREN
+factor -> .ID
+factor -> .LPAREN expression RPAREN
+term -> .term TIMES factor"]
+	3 [label="ESTADOS 3
+expression -> e.xpression PLUS term"]
+	4 [label="ESTADOS 4
+factor -> I.D"]
+	5 [label="ESTADOS 5
+term -> f.actor"]
+	6 [label="ESTADOS 6
+factor -> .LPAREN expression RPAREN
+term -> .factor
+expression -> ex.pression PLUS term
+factor -> .ID
+term -> .term TIMES factor"]
+	7 [label="ESTADOS 7
+expression -> exp.ression PLUS term
+term -> t.erm TIMES factor"]
+	8 [label="ESTADOS 8
+term -> te.rm TIMES factor
+factor -> .LPAREN expression RPAREN
+factor -> .ID"]
+	9 [label="ESTADOS 9
+term -> ter.m TIMES factor"]
+	10 [label="ESTADOS 10
+expression -> e.xpression PLUS term
+factor -> LP.AREN expression RPAREN"]
+	11 [label="ESTADOS 11
+factor -> LPA.REN expression RPAREN"]
+	0 -> 1 [label=term]
+	0 -> 2 [label=LPAREN]
+	0 -> 3 [label=expression]
+	0 -> 4 [label=ID]
+	0 -> 5 [label=factor]
+	1 -> 8 [label=TIMES]
+	2 -> 1 [label=term]
+	2 -> 2 [label=LPAREN]
+	2 -> 10 [label=expression]
+	2 -> 4 [label=ID]
+	2 -> 5 [label=factor]
+	3 -> 6 [label=PLUS]
+	6 -> 7 [label=term]
+	6 -> 2 [label=LPAREN]
+	6 -> 4 [label=ID]
+	6 -> 5 [label=factor]
+	7 -> 8 [label=TIMES]
+	8 -> 2 [label=LPAREN]
+	8 -> 4 [label=ID]
+	8 -> 9 [label=factor]
+	10 -> 6 [label=PLUS]
+	10 -> 11 [label=RPAREN]
+}

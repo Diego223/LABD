@@ -17,7 +17,6 @@ class regularExpression:
         self.checkExpression()
         self.regex = process_string(self.regex)
         self.expandExp()
-        self.regex = process_string(self.regex)
         # print("post processing", self.regex)
         self.replaceOperators()
         self.toPostfix()
@@ -150,34 +149,16 @@ class regularExpression:
                     expanded.append(self.regex[i])
                 i += 3
             #expand groups of characters
-            if i + 1 < len(self.regex) and self.regex[i] == '^':
-                #^o will be operators
-                if self.regex[i + 1] == 'o':
-                    for o in operator_symbols:
-                        # if last character, don't append |
-                        if o == last(operator_symbols):
-                            expanded.append(f"'{o}'")
-                        else:
-                            expanded.append(f"'{o}'" + alternative)
-                #^g will be groupers
-                elif self.regex[i + 1] == 'g':
-                    for g in groupers:
-                        # if last character, don't append |
-                        if g == last(groupers):
-                            expanded.append(f"'{g}'")
-                        else:
-                            expanded.append(f"'{g}'" + alternative)
-                #^a will be any of the alphabet
-                elif self.regex[i + 1] == 'a':
-                    for a in alphabet:
-                        # if last character, don't append |
-                        if a == last(alphabet):
-                            expanded.append(f"'{a}')")
-                        if a == alphabet[0]:
-                            expanded.append(f"('{a}'" + alternative)
-                        else:
-                            expanded.append(f"'{a}'" + alternative)
-                i += 2
+            if self.regex[i] == '^':
+                if self.regex[i + 1] == 'a':
+                    syms = '|'.join(anyy)
+                    expanded += f"({syms})"
+                    i += 2
+                elif self.regex[i + 1] == 's':
+                    syms = '|'.join(nospace)
+                    expanded += f"({syms})"
+                    i += 2
+                
             else:
                 expanded.append(self.regex[i])
                 i += 1

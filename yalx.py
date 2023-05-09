@@ -1,6 +1,6 @@
 from keys import *
 from scannerFunctions import *
-
+import pickle
 class YalProcessor:
     def __init__(self, yal_file):
         self.yal_file = yal_file
@@ -23,6 +23,7 @@ class YalProcessor:
 
     @staticmethod
     def convert_to_regex(rule_body):
+        rule_body = rule_body.replace('_', '^s')
         regex_rule = ""
         i = 0
         while i < len(rule_body):
@@ -158,60 +159,51 @@ class YalProcessor:
         for i in range(len(self.tokenRules)):
             self.ruleTokens[self.replace_rules(self.tokenRules[i])] = returns[i] # almacenar cada regla y su valor de retorno en un diccionario 'ruleTokens'
 
-
-
-
     def gen_file(self):
+        with open('llaves.bin', 'wb') as f:
+            pickle.dump(self.ruleTokens, f)
+            pickle.dump(self.tokensExp, f)
         content = ''
-        content += "\
+        content += '\
 from keys import *\n\
 from scannerFunctions import *\n\
 from AFD import *\n\
 from ExpressionTree import *\n\
 from regularExpression import *\n\
+import pickle \n\
 \n\
-"       '#Generacion de reglas para el scanner \n' 
-        #Agregamos el contenido de las reglas
-        for key, value in self.rules.items():
-            content+= f'{key} = "{value}"\n'
-        content += "\n"
-        content += f'\
-rules = {self.ruleTokens}\n\
-\n\
-rulexpressions = "{self.tokensExp}"\n\
-#Generacion de expresion regular aumentada utilizando las reglas \n\
-tokensRegex = regularExpression(rulexpressions)\n\
-tokensRegex.augmentRegex()\n\
-#Generacion de arbol utilizando expresion aumentada a postfix \n\
-tokenTree = ExpressionTree(tokensRegex.postfix)\n\
-tokenTree.showTable()\n\
-dfa = AFD(tree = tokenTree)\n\
-#Generacion de AFD directo \n\
-showDirect(dfa, "Directo DFA")\n\
 lineas = []\n\
-#Lectura de archivo a correr \n\
+    #Lectura de archivo a correr \n\
 archivo = input("Ingrese el numero de archivo yal.run (1.1 | 1.2): ") \n\
 archivo = "slr-" + archivo + ".yal.run"\n\
+with open ("tokens.bin", "rb") as f:\n\
+    tokenRules = pickle.load(f)\n\
+    tokensExp = pickle.load(f)\n\
+\n\
 #Escaneamos archivo buscando tokens que coincidan con las reglas definidas.\n\
 with open(archivo, "r") as f:\n\
     lineas = f.readlines()\n\
 \
-finds = findAll(lineas, rulexpressions)\n\
+finds = findAllpro(lineas, tokensExp)\n\
 llaves = []\n\
 for key, value in finds.items():\n\
-    for y in rules.keys():\n\
-        for i in range(len(value)):\n\
-            if matches(value[i][0], y):\n\
-                llaves.append([key, value[i][0], rules[y], value[i][1], value[i][2]])\n\
+    for i in range(len(value)):\n\
+        if last(value[i]) == "U":\n\
+            llaves.append([key, value[i][0], "TOKEN UNRECOGNIZED", value[i][1], value[i][2]])\n\
+        for y in tokenRules.keys():\n\
+            if matches(value[i][0], y) and last(value[i]) == "I":\n\
+                llaves.append([key, value[i][0], tokenRules[y], value[i][1], value[i][2]])\n\
 \n\
-#Printeamos resultados\n\
-print("\\n\\n Llaves Encontradas\\n")\n\
+print("\\n\\nllaves encontradas\\n")\n\
 for x in llaves:\n\
     print(x[2], " encontrado en la linea ", x[0])\n\
     print("La llave es: ", x[1])\n\
     print("Inicia en: ", x[3])\n\
     print("Finaliza en: ", x[4], "\\n\\n")\n\
+\n\
+llaves = [x for x in llaves if x[2] != "TOKEN UNRECOGNIZED"]\n\
+with open("read.bin", "wb") as f:\n\
+    pickle.dump(llaves, f)\n\
 '
-        #Generacion de archivo python
         with open(f"scanner.py", "w", encoding='UTF-8') as f:
             f.write(content)

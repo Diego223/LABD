@@ -203,7 +203,7 @@ class AFD:
     def scanner(self, input_string):
         input_string = replace_reserved_words(input_string)
         idx = 0
-        results = []  # List to store all the matching substrings with their positions
+        results = []
         while idx < len(input_string):
             current_state = self.states[0]
             temp_idx = idx
@@ -213,6 +213,7 @@ class AFD:
                 symbol = input_string[temp_idx]
                 if symbol not in self.symbols:
                     temp_idx += 1
+                    idx += 1
                     continue
                 next_state = self.transition_table[current_state].get(symbol)
                 if not next_state:
@@ -303,24 +304,6 @@ class AFD:
             for symbol, next_state in transitions.items():
                 print(f"{state} -- {symbol} --> {next_state}")
 
-def showDirect(dfa: AFD, output_filename: str = 'DFADirect'):
-    dot = graphviz.Digraph(format='dot', engine='dot')
-    dot.graph_attr['rankdir'] = 'LR'
-    dot.node_attr.update(shape='circle', fixedsize='true', width='1', height='1')
-
-    start_state = dfa.states[0]
-    dot.node(str(dfa.states.index(start_state)), label='', shape='none', width='0', height='0')
-    dot.edge('', str(dfa.states.index(start_state)), label='', arrowhead='none')
-    for final_state in dfa.final_states:
-        dot.node(str(dfa.states.index(final_state)), peripheries='2')
-    for state, transitions in dfa.transition_table.items():
-        state_idx = dfa.states.index(state)
-        for symbol, next_state in transitions.items():
-            next_state_idx = dfa.states.index(next_state)
-            dot.edge(str(state_idx), str(next_state_idx), label=symbol)
-    dot.render(output_filename, view=False)
-    dot.save(output_filename + '.dot')
-
 #**************************************************AFD SIMULATION
     def simulate_dfa(self, input_string):
         current_state = frozenset(self.initial)
@@ -347,13 +330,15 @@ def showDirect(dfa: AFD, output_filename: str = 'DFADirect'):
                 current_state = next_state
             return current_state in self.final_states
 
-    def scanner(self, input_string):
+    def scannerpro(self, input_string):
         input_string = replace_reserved_words(input_string)
         idx = 0
+        results = []
         while idx < len(input_string):
             current_state = self.states[0]
             temp_idx = idx
             success = False
+            matched_string = ""
             while temp_idx < len(input_string):
                 symbol = input_string[temp_idx]
                 if symbol not in self.symbols:
@@ -366,9 +351,31 @@ def showDirect(dfa: AFD, output_filename: str = 'DFADirect'):
                 temp_idx += 1
                 if current_state in self.final_states:
                     success = True
-                    break
+                    matched_string = input_string[idx:temp_idx]
             if success:
-                string = return_reserved_words(input_string[idx:temp_idx])
-                return string, idx, temp_idx - 1
-            idx += 1
-        return None, -1, -1
+                string = return_reserved_words(matched_string)
+                results.append((string, idx, temp_idx - 1, 'I'))  # Append the match and its positions to the results list
+                idx = temp_idx  # Update the index to continue scanning from the next character
+            else:
+                results.append((input_string[idx], idx, idx, 'U'))
+                idx += 1
+        return results
+
+
+def showDirect(dfa: AFD, output_filename: str = 'DFADirect'):
+    dot = graphviz.Digraph(format='dot', engine='dot')
+    dot.graph_attr['rankdir'] = 'LR'
+    dot.node_attr.update(shape='circle', fixedsize='true', width='1', height='1')
+
+    start_state = dfa.states[0]
+    dot.node(str(dfa.states.index(start_state)), label='', shape='none', width='0', height='0')
+    dot.edge('', str(dfa.states.index(start_state)), label='', arrowhead='none')
+    for final_state in dfa.final_states:
+        dot.node(str(dfa.states.index(final_state)), peripheries='2')
+    for state, transitions in dfa.transition_table.items():
+        state_idx = dfa.states.index(state)
+        for symbol, next_state in transitions.items():
+            next_state_idx = dfa.states.index(next_state)
+            dot.edge(str(state_idx), str(next_state_idx), label=symbol)
+    dot.render(output_filename, view=False)
+    dot.save(output_filename + '.dot')
